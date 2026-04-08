@@ -99,8 +99,7 @@ Connect your GitHub repo for automatic deployments.
 
 ## 📹 Video Demo
 
-[Link to demonstration video]
-
+https://drive.google.com/file/d/1JjVg-122DMU66b2n71HcevFpVcr6CZ8r/view?usp=sharing
 ---
 
 **Built with ❤️ for TakeUForward Frontend Engineering Challenge**
