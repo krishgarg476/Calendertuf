@@ -5,3 +5,9 @@ node_modules
 *.log
 dist
 .DS_Store
+
+calendar-challenge/.next
+interactive-calendar/dist
+interactive-calendar/dev.log
+interactive-calendar/AGENTS.md
+interactive-calendar/CLAUDE.md
