@@ -1,0 +1,431 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap');
+@import "tailwindcss";
+
+/* ──────────────────── LIGHT MODE (DEFAULT) ──────────────────── */
+:root {
+  /* Background & Paper */
+  --page-bg: #e8e5de;
+  --paper: #faf8f3;
+  --paper-ruled: #f0ede5;
+  --rule-color: #e8e4da;
+  --binding-bg: #d6d3ca;
+  --binding-ring: #a8a69f;
+
+  /* Text Colors */
+  --text-primary: #1f2937;
+  --text-secondary: #6b7280;
+  --text-muted: #b0ada6;
+  --text-ghost: #c9c5bb;
+
+  /* Borders & Effects */
+  --border-soft: #ece9e2;
+  --border-rule: #e8e4da;
+  --shadow-paper: rgba(0, 0, 0, 0.18);
+
+  /* Interactions */
+  --hover-day: rgba(var(--acc-rgb), 0.12);
+
+  /* Month accents (set dynamically per month) */
+  --acc: #1E40AF;
+  --acc-rgb: 30, 64, 175;
+  --acc-light: rgba(30, 64, 175, 0.12);
+  --acc-mid: rgba(30, 64, 175, 0.28);
+}
+
+/* ──────────────────── DARK MODE ──────────────────── */
+[data-theme='dark'] {
+  --page-bg: #0f0e0b;
+  --paper: #1a1916;
+  --paper-ruled: #211f1b;
+  --rule-color: #2a2825;
+  --binding-bg: #2c2a26;
+  --binding-ring: #4a4844;
+
+  --text-primary: #f0ece3;
+  --text-secondary: #a09890;
+  --text-muted: #6b6760;
+  --text-ghost: #3d3b37;
+
+  --border-soft: #2e2c28;
+  --border-rule: #2a2825;
+  --shadow-paper: rgba(0, 0, 0, 0.55);
+
+  --hover-day: rgba(var(--acc-rgb), 0.18);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  background-color: var(--page-bg);
+}
+
+body {
+  background-color: var(--page-bg);
+  color: var(--text-primary);
+  font-family: 'Outfit', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  line-height: 1.5;
+}
+
+/* Prevent flash on first load */
+body:not(.theme-ready) {
+  transition: none !important;
+}
+
+/* Smooth transitions after mount */
+body.theme-ready,
+body.theme-ready *,
+body.theme-ready *::before,
+body.theme-ready *::after {
+  transition: background-color 0.22s ease, color 0.22s ease, border-color 0.22s ease, box-shadow 0.22s ease !important;
+}
+
+/* ──────────────────── SCROLLBAR STYLING ──────────────────── */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--paper-ruled);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--binding-ring);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-secondary);
+}
+
+/* ──────────────────── SELECTION STYLING ──────────────────── */
+::selection {
+  background-color: var(--acc);
+  color: white;
+}
+
+::-moz-selection {
+  background-color: var(--acc);
+  color: white;
+}
+
+/* ──────────────────── CALENDAR PAPER CARD ──────────────────── */
+.calendar-paper {
+  background: var(--paper);
+  border: 1px solid var(--border-soft);
+  color: var(--text-primary);
+}
+
+/* Light mode shadow */
+.calendar-paper {
+  box-shadow:
+    0 2px 0 #ccc,
+    0 4px 0 #bbb,
+    0 6px 0 #aaa,
+    0 20px 60px rgba(0, 0, 0, 0.20),
+    0 6px 20px rgba(0, 0, 0, 0.10);
+}
+
+/* Dark mode shadow */
+[data-theme='dark'] .calendar-paper {
+  box-shadow:
+    0 2px 0 #000,
+    0 4px 0 #0a0a0a,
+    0 6px 0 #111,
+    0 28px 70px rgba(0, 0, 0, 0.60),
+    0 8px 24px rgba(0, 0, 0, 0.40);
+}
+
+/* ──────────────────── SPIRAL RINGS ──────────────────── */
+.spiral-ring {
+  border-color: var(--binding-ring);
+  background: var(--binding-bg);
+  box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.1);
+}
+
+[data-theme='dark'] .spiral-ring {
+  border-color: var(--binding-ring);
+  background: var(--binding-bg);
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+/* ──────────────────── DAY CELLS ──────────────────── */
+.day-cell {
+  position: relative;
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  font-family: 'Outfit', sans-serif;
+  border-radius: 0.5rem;
+  color: var(--text-primary);
+  background: var(--paper);
+  user-select: none;
+  border: 1px solid transparent;
+  min-height: 40px;
+}
+
+.day-cell:hover:not(.other-month) {
+  background: var(--hover-day);
+}
+
+/* Other month padding days */
+.day-cell.other-month {
+  color: var(--text-ghost);
+  cursor: default;
+  background: transparent;
+  pointer-events: none;
+  font-weight: 400;
+  opacity: 0.4;
+}
+
+/* Weekend styling */
+.day-cell.is-weekend {
+  color: var(--text-secondary);
+  font-weight: 400;
+}
+
+/* Today indicator */
+.day-cell.is-today {
+  color: white;
+  background: var(--acc);
+  font-weight: 600;
+  box-shadow: 0 2px 8px rgba(var(--acc-rgb), 0.3);
+}
+
+.day-cell.is-today:hover {
+  box-shadow: 0 4px 12px rgba(var(--acc-rgb), 0.4);
+}
+
+/* Holiday marker */
+.day-cell.is-holiday::after {
+  content: '';
+  position: absolute;
+  bottom: 3px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 3px;
+  height: 3px;
+  background: var(--acc);
+  border-radius: 50%;
+}
+
+/* ──────────────────── RANGE SELECTION ──────────────────── */
+
+/* Range start — left pill */
+.day-cell.range-start {
+  background: var(--acc);
+  color: white;
+  font-weight: 600;
+  border-radius: 0.75rem 0 0 0.75rem;
+  box-shadow: 0 2px 8px rgba(var(--acc-rgb), 0.3);
+}
+
+/* Range end — right pill */
+.day-cell.range-end {
+  background: var(--acc);
+  color: white;
+  font-weight: 600;
+  border-radius: 0 0.75rem 0.75rem 0;
+  box-shadow: 0 2px 8px rgba(var(--acc-rgb), 0.3);
+}
+
+/* In-range highlight */
+.day-cell.in-range {
+  background: rgba(var(--acc-rgb), 0.12);
+  color: var(--text-primary);
+  border-radius: 0;
+}
+
+[data-theme='dark'] .day-cell.in-range {
+  background: rgba(var(--acc-rgb), 0.18);
+  color: var(--text-primary);
+}
+
+/* ──────────────────── CALENDAR GRID ──────────────────── */
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 6px;
+}
+
+.weekday-header {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 6px;
+  margin-bottom: 12px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--border-soft);
+}
+
+.weekday-header span {
+  text-align: center;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  line-height: 1.4;
+  padding: 4px 0;
+}
+
+/* ──────────────────── NOTES SECTION ──────────────────── */
+
+.note-line {
+  position: relative;
+  padding: 12px;
+  margin-bottom: 8px;
+  border-radius: 0.5rem;
+  background: var(--paper-ruled);
+  border: 1px solid var(--border-rule);
+  color: var(--text-primary);
+}
+
+.note-line:hover {
+  border-color: var(--acc);
+  background: var(--paper);
+}
+
+.note-line::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(to right, var(--border-rule) 0%, var(--border-rule) 85%, transparent 100%);
+  opacity: 0.4;
+}
+
+/* ──────────────────── THEME TOGGLE BUTTON ──────────────────── */
+.theme-toggle {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  width: 52px;
+  height: 28px;
+  padding: 0 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  border: none;
+  border-radius: 14px;
+  background-color: var(--binding-bg);
+  color: var(--text-secondary);
+  cursor: pointer;
+  box-shadow: 0 2px 8px var(--shadow-paper);
+  z-index: 50;
+  outline: none;
+  font-size: 14px;
+}
+
+.theme-toggle:hover {
+  background-color: color-mix(in srgb, var(--binding-bg) 92%, var(--text-primary));
+}
+
+.theme-toggle:active {
+  transform: scale(0.95);
+}
+
+[data-theme='dark'] .theme-toggle {
+  background-color: var(--paper-ruled);
+}
+
+[data-theme='dark'] .theme-toggle:hover {
+  background-color: color-mix(in srgb, var(--paper-ruled) 92%, white);
+}
+
+/* ──────────────────── HERO IMAGE DARK MODE ──────────────────── */
+.hero-overlay {
+  display: none;
+}
+
+[data-theme='dark'] .hero-overlay {
+  display: block;
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.22);
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* ──────────────────── HEADER ──────────────────── */
+header {
+  background-color: var(--paper);
+  border-bottom-color: var(--border-soft);
+  color: var(--text-primary);
+}
+
+/* ──────────────────── TEXT COLOR REPLACEMENTS ──────────────────── */
+
+/* All text elements use tokens instead of hardcoded colors */
+h1, h2, h3, h4, h5, h6 {
+  color: var(--text-primary);
+}
+
+p, span, label {
+  color: var(--text-primary);
+}
+
+a {
+  color: var(--acc);
+}
+
+button {
+  color: var(--text-primary);
+}
+
+/* ──────────────────── RESPONSIVE ──────────────────── */
+@media (max-width: 768px) {
+  .day-cell {
+    font-size: 13px;
+    min-height: 36px;
+  }
+
+  .calendar-grid {
+    gap: 4px;
+  }
+
+  .weekday-header {
+    gap: 4px;
+  }
+}
+
+@media (max-width: 640px) {
+  .day-cell {
+    font-size: 11px;
+    min-height: 32px;
+    border-radius: 0.375rem;
+  }
+
+  .calendar-grid {
+    gap: 3px;
+  }
+
+  .weekday-header {
+    gap: 3px;
+    margin-bottom: 6px;
+    padding-bottom: 8px;
+  }
+
+  .weekday-header span {
+    font-size: 10px;
+  }
+
+  .theme-toggle {
+    bottom: 16px;
+    right: 16px;
+  }
+}
